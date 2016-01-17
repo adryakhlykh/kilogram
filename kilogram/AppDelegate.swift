@@ -67,12 +67,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillTerminate(application: UIApplication) {
-        do {
-            try Locksmith.deleteDataForUserAccount("instagram")
-        }
-        catch {
-            
-        }
         self.saveContext()
       
     }
