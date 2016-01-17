@@ -34,7 +34,6 @@ class Picture: UIViewController {
     
 
     override func viewWillAppear(animated: Bool) {
-        self.view.backgroundColor = UIColor(patternImage: UIImage(named: "bg")!)
 
         
         let width = UIScreen.mainScreen().bounds.size.width

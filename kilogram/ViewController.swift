@@ -41,7 +41,6 @@ class ViewController: UIViewController, UICollectionViewDataSource,InstagramServ
         collectionView.delegate = self
         instagramService.fetchData()
         
-        collectionView.backgroundColor = UIColor(patternImage: UIImage(named: "basebg")!)
         
 
         self.refreshControl = UIRefreshControl()

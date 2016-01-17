@@ -22,6 +22,8 @@ class InstagramService: NSObject {
     var userCoreData = [NSManagedObject]()
     var imageCoreData = [NSManagedObject]()
     var maxID = ""
+    
+    
     func getToken()->String {
         var tokenString=""
         if let a = Locksmith.loadDataForUserAccount("instagram"){
@@ -97,7 +99,7 @@ class InstagramService: NSObject {
                                           let imageDict = ["picURL":urlData,"likes":likes,"comments":comments,"picID":picID,"text":text!,"maxID":self.maxID]
                                         if refresh == "refresh" {
                                             
-                                                self.update(imageDict,index: i)
+                                                self.update(imageDict,index: i,entityName: "Image")
                                                 i++
                                                 
                                             
@@ -120,7 +122,12 @@ class InstagramService: NSObject {
                                     
                                     let userDict:[String : AnyObject] = ["avatar": urlData,"username":username,"fullName": fullName, "media":media,"follow":follow,"followers":followers]
                                     
-                                    self.saveData(userDict,entityName: "User")
+                                    if refresh == "refresh" {
+                                        self.update(userDict,index: 0,entityName: "User")
+                                        
+                                    } else {
+                                        self.saveData(userDict,entityName: "User")
+                                    }
                                 }
                         
                             }
@@ -174,23 +181,28 @@ class InstagramService: NSObject {
         } catch {}
     }
         
-    func update(dict:[String:AnyObject],index:Int) {
+    func update(dict:[String:AnyObject],index:Int,entityName:String) {
         let managedContext = appDelegate.managedObjectContext
-        let imageRequest = NSFetchRequest(entityName: "Image")
+        let Request = NSFetchRequest(entityName: entityName)
         
         
         
         do {
-            let imageResults = try managedContext.executeFetchRequest(imageRequest) as? [NSManagedObject]
-            let obj = imageResults![index]
+            let Results = try managedContext.executeFetchRequest(Request) as? [NSManagedObject]
+            let obj = Results![index]
             obj.setValuesForKeysWithDictionary(dict)
             try managedContext.save()
-            
-            imageCoreData = imageResults!
-            self.delegate?.imageCoreData(imageCoreData)
+            if entityName == "Image" {
+                imageCoreData = Results!
+                self.delegate?.imageCoreData(imageCoreData)
+                self.maxID = dict["maxID"] as! String
+
+            } else {
+                userCoreData = Results!
+                self.delegate?.userCoreData(userCoreData)
+            }
         } catch {}
         
-        self.maxID = dict["maxID"] as! String
         
         
         
